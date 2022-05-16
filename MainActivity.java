@@ -1,67 +1,103 @@
-package com.example.login_db_ex_01;
+package com.example.finalproject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
 public class MainActivity extends AppCompatActivity {
-
-    EditText tmpName, tmpId, tmpPwd, tmpEmail;
-    Button button;
-    String name="",id="",pwd="",email="";
+    ImageView btn1, btn2, btn3;
+    FragmentAdd add;
+    FragmentList list;
+    FragmentPic pic;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
-        tmpName=(EditText) findViewById(R.id.tmpName);
-        tmpId=(EditText) findViewById(R.id.tmpId);
-        tmpPwd=(EditText) findViewById(R.id.tmpPwd);
-        tmpEmail=(EditText) findViewById(R.id.tmpEmail);
-        button=(Button) findViewById(R.id.button);
+        btn1 = (ImageView) findViewById(R.id.btn1);
+        btn2 = (ImageView) findViewById(R.id.btn2);
+        btn3 = (ImageView) findViewById(R.id.btn3);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        add=new FragmentAdd();
+        list=new FragmentList();
+        pic=new FragmentPic();
+
+        fragmentManager=getSupportFragmentManager();
+
+
+        btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                name=tmpName.getText().toString();
-                id=tmpId.getText().toString();
-                pwd=tmpPwd.getText().toString();
-                email=tmpEmail.getText().toString();
-
-                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                //String url = "http://172.111.121.11:8080/myapp/login2.jsp?name=AhnJiSun&id=Ahn&pwd=Ahn&email=abc@co.kr";
-                String url = "http://172.30.1.6:8080/myapp/login2.jsp?name="+name+"&id="+id+"&pwd="+pwd+"&email="+email;
-                StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                        url,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e("error", error.toString());
-                            }
-                        });
-                requestQueue.add(stringRequest);
+                btn1.setVisibility(View.GONE);
+                btn2.setVisibility(View.GONE);
+                btn3.setVisibility(View.GONE);
+                FragmentTransaction ft=fragmentManager.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.container,add);
+                ft.commit();
             }
         });
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction ft=fragmentManager.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.container,list);
+                ft.commit();
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction ft=fragmentManager.beginTransaction();
+                ft.addToBackStack(null);
+                ft.replace(R.id.container,pic);
+                ft.commit();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.menu1, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId()==R.id.frag1){
+            Intent intent =new Intent(getApplicationContext(),IntroActivity.class);
+            startActivity(intent);
+        } else if (item.getItemId()==R.id.frag2){
+            //Intent intent=new Intent(getApplicationContext(),FragmentAdd.class);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,add).commit();
+        } else if (item.getItemId()==R.id.frag3){
+            Toast.makeText(getApplicationContext(), "세탁관련", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId()==R.id.frag4){
+            //Intent intent=new Intent(getApplicationContext(),FragmentPic.class);
+            getSupportFragmentManager().beginTransaction().replace(R.id.container,pic).commit();
+        }
+        return false;
     }
 }
